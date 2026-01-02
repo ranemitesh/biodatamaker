@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Marathi Biodata Maker</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <style>
+        :root { --primary: #b71c1c; --secondary: #e65100; --gold: #d4af37; --bg: #fdf2e9; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); padding: 15px; }
+        .container { max-width: 750px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        .section-title { 
+            background: #fff3e0; color: var(--secondary); 
+            padding: 10px 15px; border-radius: 5px; 
+            margin: 25px 0 15px 0; font-weight: bold; border-left: 5px solid var(--secondary);
+            font-size: 1.1em;
+        }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: #333; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        input:focus { border-color: var(--secondary); outline: none; }
+
+        .photo-upload { border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; }
+        #photo-preview-input { max-width: 120px; margin-top: 10px; border-radius: 5px; display: none; }
+
+        /* Final Biodata Design */
+        #output { display: none; border: 12px double var(--gold); padding: 40px; background: white; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
+        .profile-pic { width: 140px; height: 170px; border: 3px solid var(--gold); object-fit: cover; }
+        
+        .data-row { display: flex; padding: 8px 0; border-bottom: 1px solid #f0f0f0; align-items: center; }
+        .label-col { width: 38%; font-weight: bold; color: #5d4037; font-size: 16px; }
+        .value-col { width: 62%; font-size: 16px; color: #000; }
+        .out-section-head { color: var(--secondary); font-weight: bold; margin-top: 25px; font-size: 1.1em; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+
+        button { background: var(--primary); color: white; padding: 15px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; margin-top: 20px; }
+
+        @media print {
+            .no-print { display: none; }
+            #output { display: block !important; border: 10px double var(--gold); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container no-print" id="input-form">
+    <h2 style="text-align:center; color: var(--primary);">💍 संपूर्ण मराठी बायोडाटा</h2>
+    
+    <div class="photo-upload" onclick="document.getElementById('photo-input').click()">
+        <strong>📸 फोटो अपलोड करा (Upload Photo)</strong>
+        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="previewImage(this)">
+        <center><img id="photo-preview-input" src=""></center>
+    </div>
+
+    <form id="biodataForm">
+        <div class="section-title">१. व्यक्तिगत माहिती (Personal Details)</div>
+        <div class="input-group">
+            <label>पूर्ण नाव (Full Name) *</label>
+            <input type="text" id="name" class="transliterate" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group"><label>जन्म तारीख *</label><input type="date" id="dob" required></div>
+            <div class="input-group"><label>जन्म वेळ</label><input type="text" id="tob" placeholder="उदा. सकाळी १०:२०"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group"><label>उंची</label><input type="text" id="height" placeholder="उदा. 5' 6''"></div>
+            <div class="input-group"><label>जात / पोटजात</label><input type="text" id="caste" class="transliterate"></div>
+        </div>
+        <div class="input-group"><label>शिक्षण (Education)</label><input type="text" id="edu" class="transliterate"></div>
+        <div class="input-group"><label>नोकरी/व्यवसाय आणि उत्पन्न</label><input type="text" id="job" class="transliterate"></div>
+
+        <div class="section-title">२. कुंडली माहिती (Horoscope)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="input-group"><label>राशी</label><input type="text" id="rashi" class="transliterate"></div>
+            <div class="input-group"><label>नक्षत्र</label><input type="text" id="nakshatra" class="transliterate"></div>
+        </div>
+        <div class="input-group"><label>गोत्र</label><input type="text" id="gothra" class="transliterate"></div>
+
+        <div class="section-title">३. कौटुंबिक माहिती (Family Details)</div>
+        <div class="input-group"><label>वडिलांचे नाव व व्यवसाय</label><input type="text" id="father" class="transliterate"></div>
+        <div class="input-group"><label>आईचे नाव</label><input type="text" id="mother" class="transliterate"></div>
+        <div class="input-group"><label>मामाचे आडनाव (मोसळ)</label><input type="text" id="mama" class="transliterate"></div>
+        <div class="input-group"><label>भाऊ / बहीण</label><input type="text" id="siblings" class="transliterate"></div>
+        <div class="input-group"><label>नातेसंबंध (Relatives Surnames)</label><textarea id="relatives" class="transliterate" rows="2"></textarea></div>
+
+        <div class="section-title">४. संपर्क आणि अपेक्षा (Contact & Expectations)</div>
+        <div class="input-group"><label>मोबाईल नंबर *</label><input type="tel" id="mobile" pattern="[0-9]{10}" required></div>
+        <div class="input-group"><label>पत्ता (Address)</label><textarea id="address" class="transliterate" rows="2"></textarea></div>
+        <div class="input-group"><label>अपेक्षा (Expectations)</label><textarea id="expectations" class="transliterate" rows="2"></textarea></div>
+
+        <button type="submit">बायोडाटा तयार करा</button>
+    </form>
+</div>
+
+<div id="output" class="container">
+    <div class="header">
+        <div style="flex: 1; text-align: center;">
+            <h2 style="margin: 0; color: #000;">|| श्री गणेशाय नमः ||</h2>
+            <h3 style="color: var(--primary); margin: 5px 0; letter-spacing: 2px;">लग्नाचा बायोडाटा</h3>
+        </div>
+        <img id="final-photo" class="profile-pic" src="" style="display:none;">
+    </div>
+
+    <div id="preview-content"></div>
+
+    <div class="no-print" style="margin-top: 30px; display: flex; gap: 10px;">
+        <button onclick="window.print()" style="background: #2e7d32; flex: 2;">PDF म्हणून सेव्ह करा</button>
+        <button onclick="location.reload()" style="background: #666; flex: 1;">बदल करा</button>
+    </div>
+</div>
+
+<script>
+    // 1. Google Transliteration Setup
+    google.load("elements", "1", { packages: "transliteration" });
+    function onLoad() {
+        var options = {
+            sourceLanguage: google.elements.transliteration.LanguageCode.ENGLISH,
+            destinationLanguage: [google.elements.transliteration.LanguageCode.MARATHI],
+            shortcutKey: 'ctrl+g', transliterationEnabled: true
+        };
+        var control = new google.elements.transliteration.TransliterationControl(options);
+        var inputs = document.getElementsByClassName("transliterate");
+        for (var i = 0; i < inputs.length; i++) { control.makeTransliteratable([inputs[i]]); }
+    }
+    google.setOnLoadCallback(onLoad);
+
+    // 2. Photo Handling
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('photo-preview-input').src = e.target.result;
+                document.getElementById('photo-preview-input').style.display = 'block';
+                document.getElementById('final-photo').src = e.target.result;
+                document.getElementById('final-photo').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 3. Data Compilation
+    document.getElementById('biodataForm').onsubmit = function(e) {
+        e.preventDefault();
+        const dataMap = [
+            { head: 'वैयक्तिक माहिती', fields: [['नाव', 'name'], ['जन्म तारीख', 'dob'], ['जन्म वेळ', 'tob'], ['उंची', 'height'], ['जात/पोटजात', 'caste'], ['शिक्षण', 'edu'], ['नोकरी/व्यवसाय', 'job']] },
+            { head: 'कुंडली माहिती', fields: [['राशी', 'rashi'], ['नक्षत्र', 'nakshatra'], ['गोत्र', 'gothra']] },
+            { head: 'कौटुंबिक माहिती', fields: [['वडिलांचे नाव', 'father'], ['आईचे नाव', 'mother'], ['मामाचे आडनाव', 'mama'], ['भाऊ/बहीण', 'siblings'], ['नातेसंबंध', 'relatives']] },
+            { head: 'संपर्क आणि अपेक्षा', fields: [['पत्ता', 'address'], ['मोबाईल', 'mobile'], ['अपेक्षा', 'expectations']] }
+        ];
+
+        let html = "";
+        dataMap.forEach(sec => {
+            html += `<div class="out-section-head">${sec.head}</div>`;
+            sec.fields.forEach(f => {
+                const val = document.getElementById(f[1]).value;
+                if(val) html += `<div class="data-row"><div class="label-col">${f[0]}</div><div class="value-col">: ${val}</div></div>`;
+            });
+        });
+
+        document.getElementById('preview-content').innerHTML = html;
+        document.getElementById('input-form').style.display = 'none';
+        document.getElementById('output').style.display = 'block';
+        window.scrollTo(0,0);
+    };
+</script>
+
+</body>
+</html>
